@@ -80,7 +80,7 @@ class ReflexCaptureAgent(CaptureAgent):
 
     foodLeft = len(self.getFood(gameState).asList())
 
-    if foodLeft <= 120:
+    if foodLeft <= 0:
       bestDist = 9999
       for action in actions:
         successor = self.getSuccessor(gameState, action)
@@ -138,7 +138,7 @@ class OffensiveReflexAgent(ReflexCaptureAgent):
   def getFeatures(self, gameState, action):
     features = util.Counter()
     successor = self.getSuccessor(gameState, action)
-    foodList = self.getFood(successor).asList()    
+    foodList = self.getFood(successor).asList()
     features['successorScore'] = -len(foodList)#self.getScore(successor)
 
     # Compute distance to the nearest food
