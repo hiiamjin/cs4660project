@@ -98,6 +98,7 @@ class AgentKing(CaptureAgent):
     Picks among actions randomly.
     """
     actions = gameState.getLegalActions(self.index)
+    print("Possible actions: "+ str(actions))
 
     '''
     You should change this in your own agent.
@@ -128,6 +129,7 @@ class AgentKing(CaptureAgent):
         if dist < bestDist:
           bestAction = action
           bestDist = dist
+      print(bestAction)
       return bestAction
 
     chosenAction = random.choice(bestActions)
@@ -299,8 +301,17 @@ class DefensiveReflexAgent(AgentKing):
     if action == Directions.STOP: features['stop'] = 1
     rev = Directions.REVERSE[gameState.getAgentState(self.index).configuration.direction]
     if action == rev: features['reverse'] = 1
+    
+    possibleInvaders = [a for a in enemies if not a.isPacman and a.getPosition() != None]
+    dists = [self.getMazeDistance(myPos, a.getPosition()) for a in possibleInvaders]
+    features['possibleInvaderDistance'] = min(dists)
+     
+    if action == Directions.STOP: features['stop'] = 1
+    rev = Directions.REVERSE[gameState.getAgentState(self.index).configuration.direction]
+    if action == rev: features['reverse'] = 1
 
     return features
 
   def getWeights(self, gameState, action):
-    return {'numInvaders': -1000, 'onDefense': 100, 'invaderDistance': -10, 'stop': -100, 'reverse': -2}
+    return {'numInvaders': -1000, 'onDefense': 100, 'invaderDistance': -10, 'stop': -100, 'reverse': -2,
+            'possibleInvaderDistance':-10}
