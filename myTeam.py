@@ -90,6 +90,7 @@ class DummyAgent(CaptureAgent):
     self.initFood = self.getFood(gameState).asList()
     self.foodEaten = 0
     self.timer = 0.0
+    self.foodCollected = 0
     # print(len(self.initFood))
     '''
     Your initialization code goes here, if you need any.
@@ -136,11 +137,56 @@ class DummyAgent(CaptureAgent):
       return bestAction
 
     chosenAction = random.choice(bestActions)
-    successor = self.getSuccessor(gameState, chosenAction)
+    #successor = self.getSuccessor(gameState, chosenAction)
+    if self.getSuccessor(gameState, chosenAction).getAgentPosition(self.index) in self.getFood(gameState).asList():
+      self.foodCollected += 1
 
-
+    if self.foodCollected >= 2:
+      chosenAction = self.goHome(gameState)
     return chosenAction
 
+  def goHome(self, gameState):
+    # head on home and avoid ghosts
+    distance = float('inf')
+    bestAction = Directions.STOP
+
+    for a in gameState.getLegalActions(self.index):
+      succ = self.getSuccessor(gameState, a)
+      if self.getClosestEnemyPosition(succ) < 5:
+        continue
+
+      myNextPos = succ.getAgentState(self.index).getPosition()
+      if self.getMazeDistance(myNextPos,self.start) < distance:
+        distance = self.getMazeDistance(myNextPos,self.start)
+        bestAction = a
+
+
+    if self.getSuccessor(gameState, bestAction).getAgentState(self.index).isPacman:
+      x = 1
+    else:
+      self.foodCollected = 0
+
+    return bestAction
+
+  def getClosestEnemyPosition(self, gameState):
+    myPos = gameState.getAgentPosition(self.index)
+    closest = float('inf')
+    for enemy, pos in self.getEnemies(gameState):
+      if self.getMazeDistance(myPos, pos) < closest:
+        closest = self.getMazeDistance(myPos, pos)
+      if self.getMazeDistance(myPos, pos) == 0:
+        return 1000
+    return closest
+
+
+  def getEnemies(self, gameState):
+    enemies = list()
+    for i in self.getOpponents(gameState):
+      if gameState.getAgentPosition(i) == None:
+        x = 1
+      else:
+        enemies.append((gameState.getAgentState(i), gameState.getAgentPosition(i)))
+    return enemies
 
   def getSuccessor(self, gameState, action):
     """
@@ -227,7 +273,7 @@ class OffensiveReflexAgent(DummyAgent):
     return features
 
   def getWeights(self, gameState, action):
-    return {'successorScore': 100, 'distanceToFood': -1, 'ghostDistance': -100, 'stop': -100, 'distanceToPower': -1, 'whiteGhostDistance': 0}
+    return {'successorScore': 100, 'distanceToFood': -1, 'ghostDistance': -100, 'stop': -100, 'distanceToPower': -1, 'whiteGhostDistance': -1}
 
 
 
