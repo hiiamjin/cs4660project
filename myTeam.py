@@ -311,10 +311,6 @@ class DefensiveReflexAgent(DummyAgent):
     possibleInvaders = [a for a in enemies if not a.isPacman and a.getPosition() != None]
     dists = [self.getMazeDistance(myPos, a.getPosition()) for a in possibleInvaders]
     features['possibleInvaderDistance'] = min(dists)
-     
-    if action == Directions.STOP: features['stop'] = 1
-    rev = Directions.REVERSE[gameState.getAgentState(self.index).configuration.direction]
-    if action == rev: features['reverse'] = 1
 
     return features
 
