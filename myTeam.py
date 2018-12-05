@@ -162,7 +162,7 @@ class DummyAgent(CaptureAgent):
 
 
     if self.getSuccessor(gameState, bestAction).getAgentState(self.index).isPacman:
-      x = 1
+      p = 1
     else:
       self.foodCollected = 0
 
@@ -183,7 +183,7 @@ class DummyAgent(CaptureAgent):
     enemies = list()
     for i in self.getOpponents(gameState):
       if gameState.getAgentPosition(i) == None:
-        x = 1
+        p = 1
       else:
         enemies.append((gameState.getAgentState(i), gameState.getAgentPosition(i)))
     return enemies
