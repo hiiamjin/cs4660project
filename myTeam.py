@@ -312,8 +312,14 @@ class DefensiveReflexAgent(DummyAgent):
     dists = [self.getMazeDistance(myPos, a.getPosition()) for a in possibleInvaders]
     features['possibleInvaderDistance'] = min(dists)
 
+    features['vulnerableState'] = 0
+    features['maintainDistance'] = 0
+    if successor.getAgentState(self.index).scaredTimer > 0: 
+      features['vulnerableState'] = 1
+      features['maintainDistance'] = 3
+    
     return features
 
   def getWeights(self, gameState, action):
     return {'numInvaders': -1000, 'onDefense': 100, 'invaderDistance': -10, 'stop': -100, 'reverse': -2,
-            'possibleInvaderDistance':-10}
+            'possibleInvaderDistance':-10, 'vulnerableState': 50, 'maintainDistance':50}
