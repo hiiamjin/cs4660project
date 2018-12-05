@@ -314,9 +314,13 @@ class DefensiveReflexAgent(DummyAgent):
 
     features['vulnerableState'] = 0
     features['maintainDistance'] = 0
+
     if successor.getAgentState(self.index).scaredTimer > 0: 
       features['vulnerableState'] = 1
-      features['maintainDistance'] = 3
+
+      invaders = [a for a in enemies if a.isPacman and a.getPosition() != None]
+      dists = [self.getMazeDistance(myPos, a.getPosition()) for a in invaders]
+      features['maintainDistance'] = min(dists)
     
     return features
 
